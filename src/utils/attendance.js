@@ -10,7 +10,7 @@ export function calculatePrediction(attended, total, target = 75) {
     return { percentage: 0, required: null, bunkable: null, status: 'safe' }
   }
 
-  const percentage = Math.round((attended / total) * 100)
+  const percentage = Number(((attended / total) * 100).toFixed(2))
 
   let required = null
   let bunkable = null

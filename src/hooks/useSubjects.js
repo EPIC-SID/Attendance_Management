@@ -138,7 +138,7 @@ export function useSubjects() {
   const totalAttended = subjects.reduce((sum, s) => sum + s.attended, 0)
   const totalClasses = subjects.reduce((sum, s) => sum + s.total, 0)
   const overallPercentage = totalClasses > 0
-    ? Math.round((totalAttended / totalClasses) * 100)
+    ? Number(((totalAttended / totalClasses) * 100).toFixed(2))
     : 0
 
   return {
