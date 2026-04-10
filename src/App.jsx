@@ -95,6 +95,7 @@ export default function App() {
             totalAttended={totalAttended}
             totalClasses={totalClasses}
             subjectCount={subjects.length}
+            target={target}
           />
         </div>
 

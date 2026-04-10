@@ -1,18 +1,19 @@
 import CircularProgress from './CircularProgress'
+import { calculatePrediction, getStatusColor } from '../utils/attendance'
 
-export default function DashboardCard({ overallPercentage, totalAttended, totalClasses, subjectCount }) {
-  const color =
-    overallPercentage >= 75 ? '#34d399' :
-    overallPercentage >= 65 ? '#fbbf24' : '#f87171'
+export default function DashboardCard({ overallPercentage, totalAttended, totalClasses, subjectCount, target }) {
+  // Use the same prediction engine for overall stats
+  const prediction = calculatePrediction(totalAttended, totalClasses, target || 75)
+  const colors = getStatusColor(prediction.status)
 
   return (
     <div className="glass-card p-6 md:p-8 animate-fade-in-up">
       <div className="flex flex-col sm:flex-row items-center gap-6">
         {/* Circular Progress */}
-        <CircularProgress percentage={overallPercentage} size={140} strokeWidth={10} color={color} />
+        <CircularProgress percentage={overallPercentage} size={140} strokeWidth={10} color={colors.ring} />
 
         {/* Stats */}
-        <div className="flex-1 text-center sm:text-left">
+        <div className="flex-1 text-center sm:text-left w-full">
           <h2 className="text-xl font-bold text-white mb-1">Overall Attendance</h2>
           <p className="text-white/50 text-sm mb-4">Across all your subjects</p>
 
@@ -21,6 +22,22 @@ export default function DashboardCard({ overallPercentage, totalAttended, totalC
             <StatBox label="Attended" value={totalAttended} />
             <StatBox label="Total" value={totalClasses} />
           </div>
+
+          {totalClasses > 0 && (
+            <div className={`mt-5 text-sm font-medium ${colors.text} bg-white/[0.02] border border-white/[0.05] px-4 py-3 rounded-xl inline-flex w-full text-center sm:text-left shadow-inner`}>
+              <div className="mx-auto sm:mx-0">
+                {prediction.required !== null && prediction.required > 0 && (
+                  <span>📚 Attend <strong className="text-white mx-0.5">{prediction.required}</strong> more class{prediction.required > 1 ? 'es' : ''} overall to hit {target}%</span>
+                )}
+                {prediction.bunkable !== null && prediction.bunkable > 0 && (
+                  <span>🎉 You can safely bunk <strong className="text-white mx-0.5">{prediction.bunkable}</strong> class{prediction.bunkable > 1 ? 'es' : ''} across all subjects!</span>
+                )}
+                {prediction.bunkable === 0 && prediction.required === null && (
+                  <span>⚡ You're right on the edge globally — keep attending!</span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
