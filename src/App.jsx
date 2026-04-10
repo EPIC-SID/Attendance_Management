@@ -141,12 +141,13 @@ export default function App() {
                 id="export-btn"
                 onClick={exportSubjects}
                 className="flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-white/50 hover:text-white rounded-xl px-3 py-2 text-sm font-medium transition-colors cursor-pointer border border-white/[0.06]"
-                title="Export subjects as JSON file"
+                title="Save subjects as JSON file to your device"
               >
+                {/* Save Icon */}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                 </svg>
-                <span className="hidden sm:inline">Export</span>
+                <span className="hidden sm:inline">Save List</span>
               </button>
             )}
 
@@ -155,12 +156,13 @@ export default function App() {
               id="import-btn"
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-white/50 hover:text-white rounded-xl px-3 py-2 text-sm font-medium transition-colors cursor-pointer border border-white/[0.06]"
-              title="Import subjects from JSON file"
+              title="Load subjects from a saved JSON file"
             >
+              {/* Load Icon */}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
               </svg>
-              <span className="hidden sm:inline">Import</span>
+              <span className="hidden sm:inline">Load List</span>
             </button>
             <input
               ref={fileInputRef}

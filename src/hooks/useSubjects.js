@@ -56,17 +56,37 @@ export function useSubjects() {
     })
   }, [])
 
-  const exportSubjects = useCallback(() => {
+  const exportSubjects = useCallback(async () => {
     const data = JSON.stringify(subjects, null, 2)
-    const blob = new Blob([data], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
+    const fileName = `epic-attendance-backup-${new Date().toISOString().slice(0, 10)}.json`
+
+    // Modern browsers — native "Save As" dialog
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: fileName,
+          types: [{
+            description: 'JSON File',
+            accept: { 'application/json': ['.json'] },
+          }],
+        })
+        const writable = await handle.createWritable()
+        await writable.write(data)
+        await writable.close()
+        return
+      } catch (err) {
+        if (err.name === 'AbortError') return // user cancelled
+      }
+    }
+
+    // Fallback for older browsers
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(data)
     const a = document.createElement('a')
-    a.href = url
-    a.download = `epic-attendance-backup-${new Date().toISOString().slice(0, 10)}.json`
+    a.href = dataUri
+    a.download = fileName
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
-    URL.revokeObjectURL(url)
   }, [subjects])
 
   const importSubjects = useCallback((file) => {
