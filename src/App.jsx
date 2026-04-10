@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useRef } from 'react'
 import Header from './components/Header'
 import DashboardCard from './components/DashboardCard'
 import SubjectCard from './components/SubjectCard'
@@ -19,6 +19,8 @@ export default function App() {
     incrementAttended,
     incrementTotal,
     reorderSubjects,
+    exportSubjects,
+    importSubjects,
     totalAttended,
     totalClasses,
     overallPercentage,
@@ -27,6 +29,8 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [filter, setFilter] = useState('all')
   const [dragIndex, setDragIndex] = useState(null)
+  const [importMsg, setImportMsg] = useState(null)
+  const fileInputRef = useRef(null)
   const [target, setTarget] = useState(() => {
     try {
       return Number(localStorage.getItem('epic-attendance-target')) || 75
@@ -130,16 +134,65 @@ export default function App() {
             )}
           </div>
 
-          <button
-            id="add-subject-btn"
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-1.5 bg-accent-indigo/15 hover:bg-accent-indigo/25 text-accent-indigo rounded-xl px-4 py-2 text-sm font-medium transition-colors cursor-pointer"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Add Subject
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Export */}
+            {subjects.length > 0 && (
+              <button
+                id="export-btn"
+                onClick={exportSubjects}
+                className="flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-white/50 hover:text-white rounded-xl px-3 py-2 text-sm font-medium transition-colors cursor-pointer border border-white/[0.06]"
+                title="Export subjects as JSON file"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span className="hidden sm:inline">Export</span>
+              </button>
+            )}
+
+            {/* Import */}
+            <button
+              id="import-btn"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-white/50 hover:text-white rounded-xl px-3 py-2 text-sm font-medium transition-colors cursor-pointer border border-white/[0.06]"
+              title="Import subjects from JSON file"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span className="hidden sm:inline">Import</span>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                try {
+                  const count = await importSubjects(file)
+                  setImportMsg({ type: 'success', text: `Imported ${count} subjects!` })
+                } catch (err) {
+                  setImportMsg({ type: 'error', text: err.message })
+                }
+                e.target.value = ''
+                setTimeout(() => setImportMsg(null), 3000)
+              }}
+            />
+
+            {/* Add Subject */}
+            <button
+              id="add-subject-btn"
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-1.5 bg-accent-indigo/15 hover:bg-accent-indigo/25 text-accent-indigo rounded-xl px-4 py-2 text-sm font-medium transition-colors cursor-pointer"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Add Subject
+            </button>
+          </div>
         </div>
 
         {/* Subject cards grid */}
@@ -216,6 +269,17 @@ export default function App() {
         onClose={() => setIsModalOpen(false)}
         onAdd={addSubject}
       />
+
+      {/* Import toast notification */}
+      {importMsg && (
+        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl text-sm font-medium shadow-xl backdrop-blur-md animate-fade-in-up ${
+          importMsg.type === 'success'
+            ? 'bg-safe-green/20 text-safe-green border border-safe-green/30'
+            : 'bg-danger-red/20 text-danger-red border border-danger-red/30'
+        }`}>
+          {importMsg.type === 'success' ? '✅' : '❌'} {importMsg.text}
+        </div>
+      )}
     </div>
   )
 }
