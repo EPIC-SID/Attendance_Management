@@ -18,6 +18,8 @@ export default function App() {
     removeSubject,
     incrementAttended,
     incrementTotal,
+    decrementAttended,
+    decrementTotal,
     reorderSubjects,
     exportSubjects,
     importSubjects,
@@ -245,7 +247,9 @@ export default function App() {
                     subject={subject}
                     target={target}
                     onIncrement={incrementAttended}
+                    onDecrementAttended={decrementAttended}
                     onBunk={incrementTotal}
+                    onDecrementBunk={decrementTotal}
                     onRemove={removeSubject}
                     isDragging={dragIndex === realIndex}
                     onDragStart={(e) => handleDragStart(e, realIndex)}

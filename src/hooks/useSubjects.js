@@ -41,6 +41,22 @@ export function useSubjects() {
     ))
   }, [])
 
+  const decrementAttended = useCallback((id) => {
+    setSubjects(prev => prev.map(s => {
+      // Don't go below 0
+      if (s.id !== id || s.attended <= 0) return s
+      return { ...s, attended: s.attended - 1, total: s.total - 1 }
+    }))
+  }, [])
+
+  const decrementTotal = useCallback((id) => {
+    setSubjects(prev => prev.map(s => {
+      // Total cannot be less than attended
+      if (s.id !== id || s.total <= s.attended) return s
+      return { ...s, total: s.total - 1 }
+    }))
+  }, [])
+
   const updateSubject = useCallback((id, updates) => {
     setSubjects(prev => prev.map(s =>
       s.id === id ? { ...s, ...updates } : s
@@ -131,6 +147,8 @@ export function useSubjects() {
     removeSubject,
     incrementAttended,
     incrementTotal,
+    decrementAttended,
+    decrementTotal,
     updateSubject,
     reorderSubjects,
     exportSubjects,

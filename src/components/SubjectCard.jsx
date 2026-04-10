@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { calculatePrediction, getStatusColor } from '../utils/attendance'
 
-export default function SubjectCard({ subject, target, onIncrement, onBunk, onRemove, onDragStart, onDragOver, onDrop, onDragEnd, isDragging }) {
+export default function SubjectCard({ subject, target, onIncrement, onDecrementAttended, onBunk, onDecrementBunk, onRemove, onDragStart, onDragOver, onDrop, onDragEnd, isDragging }) {
   const { attended, total, name, id } = subject
   const prediction = useMemo(
     () => calculatePrediction(attended, total, target),
@@ -81,29 +81,55 @@ export default function SubjectCard({ subject, target, onIncrement, onBunk, onRe
 
       {/* Action buttons */}
       <div className="flex items-center gap-2">
-        <button
-          id={`attend-${id}`}
-          onClick={() => onIncrement(id)}
-          className="flex-1 flex items-center justify-center gap-1.5 bg-safe-green/10 hover:bg-safe-green/20 text-safe-green rounded-lg py-2 px-3 text-sm font-medium transition-colors cursor-pointer"
-          title="Mark as Attended (class happened, you went)"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
-          Attended
-        </button>
+        <div className="flex-1 flex bg-safe-green/10 rounded-lg overflow-hidden transition-colors hover:bg-safe-green/20 focus-within:bg-safe-green/20">
+          <button
+            id={`attend-${id}`}
+            onClick={() => onIncrement(id)}
+            className="flex-1 flex items-center justify-center gap-1.5 text-safe-green py-2 px-2 sm:px-3 text-sm font-medium cursor-pointer"
+            title="Mark as Attended (class happened, you went)"
+          >
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span className="hidden sm:inline">Attended</span>
+          </button>
+          
+          <button
+            onClick={() => onDecrementAttended(id)}
+            disabled={attended <= 0}
+            className="flex items-center justify-center px-2 text-safe-green/70 hover:text-safe-green hover:bg-safe-green/20 disabled:opacity-30 disabled:cursor-not-allowed border-l border-safe-green/20 transition-colors"
+            title="Undo Attended"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+            </svg>
+          </button>
+        </div>
 
-        <button
-          id={`bunk-${id}`}
-          onClick={() => onBunk(id)}
-          className="flex-1 flex items-center justify-center gap-1.5 bg-danger-red/10 hover:bg-danger-red/20 text-danger-red rounded-lg py-2 px-3 text-sm font-medium transition-colors cursor-pointer"
-          title="Mark as Bunked (class happened, you skipped)"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          Bunked
-        </button>
+        <div className="flex-1 flex bg-danger-red/10 rounded-lg overflow-hidden transition-colors hover:bg-danger-red/20 focus-within:bg-danger-red/20">
+          <button
+            id={`bunk-${id}`}
+            onClick={() => onBunk(id)}
+            className="flex-1 flex items-center justify-center gap-1.5 text-danger-red py-2 px-2 sm:px-3 text-sm font-medium cursor-pointer"
+            title="Mark as Bunked (class happened, you skipped)"
+          >
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span className="hidden sm:inline">Bunked</span>
+          </button>
+
+          <button
+            onClick={() => onDecrementBunk(id)}
+            disabled={total <= attended}
+            className="flex items-center justify-center px-2 text-danger-red/70 hover:text-danger-red hover:bg-danger-red/20 disabled:opacity-30 disabled:cursor-not-allowed border-l border-danger-red/20 transition-colors"
+            title="Undo Bunked"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+            </svg>
+          </button>
+        </div>
 
         <button
           id={`delete-${id}`}
