@@ -63,6 +63,10 @@ export function useSubjects() {
     ))
   }, [])
 
+  const resetAllAttendance = useCallback(() => {
+    setSubjects(prev => prev.map(s => ({ ...s, attended: 0, total: 0 })))
+  }, [])
+
   const reorderSubjects = useCallback((fromIndex, toIndex) => {
     setSubjects(prev => {
       const updated = [...prev]
@@ -150,6 +154,7 @@ export function useSubjects() {
     decrementAttended,
     decrementTotal,
     updateSubject,
+    resetAllAttendance,
     reorderSubjects,
     exportSubjects,
     importSubjects,

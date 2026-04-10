@@ -20,6 +20,7 @@ export default function App() {
     incrementTotal,
     decrementAttended,
     decrementTotal,
+    resetAllAttendance,
     reorderSubjects,
     exportSubjects,
     importSubjects,
@@ -30,6 +31,7 @@ export default function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [filter, setFilter] = useState('all')
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false)
   const [dragIndex, setDragIndex] = useState(null)
   const [importMsg, setImportMsg] = useState(null)
   const fileInputRef = useRef(null)
@@ -138,6 +140,21 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Reset Stats */}
+            {subjects.length > 0 && (
+              <button
+                id="reset-btn"
+                onClick={() => setIsResetModalOpen(true)}
+                className="flex items-center gap-1.5 bg-danger-red/10 hover:bg-danger-red/20 text-danger-red/80 hover:text-danger-red rounded-xl px-3 py-2 text-sm font-medium transition-colors cursor-pointer border border-danger-red/10 mr-1 sm:mr-2"
+                title="Reset all attended/total classes to 0"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span className="hidden sm:inline">Reset Stats</span>
+              </button>
+            )}
+
             {/* Export */}
             {subjects.length > 0 && (
               <button
@@ -276,6 +293,35 @@ export default function App() {
         onClose={() => setIsModalOpen(false)}
         onAdd={addSubject}
       />
+
+      {/* Reset Confirmation Modal */}
+      {isResetModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+          <div className="bg-surface-dark border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-xl">
+            <h3 className="text-xl font-bold text-white mb-2">Reset All Stats?</h3>
+            <p className="text-white/60 mb-6 text-sm leading-relaxed">
+              Are you sure you want to completely clear your attendance stats? All subjects will be kept, but their <strong className="text-white">Attended</strong> and <strong className="text-white">Total</strong> counts will be reset to 0. This cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setIsResetModalOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-white/50 hover:text-white transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  resetAllAttendance()
+                  setIsResetModalOpen(false)
+                }}
+                className="px-4 py-2 text-sm font-semibold rounded-lg bg-danger-red/10 text-danger-red hover:bg-danger-red hover:text-white transition-all cursor-pointer"
+              >
+                Yes, Reset Everything
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Import toast notification */}
       {importMsg && (
