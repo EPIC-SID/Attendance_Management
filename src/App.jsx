@@ -20,7 +20,7 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [target, setTarget] = useState(() => {
     try {
-      return Number(localStorage.getItem('bunksafe-target')) || 75
+      return Number(localStorage.getItem('epic-attendance-target')) || 75
     } catch {
       return 75
     }
@@ -28,7 +28,7 @@ export default function App() {
 
   const handleTargetChange = (newTarget) => {
     setTarget(newTarget)
-    localStorage.setItem('bunksafe-target', newTarget)
+    localStorage.setItem('epic-attendance-target', newTarget)
   }
 
   return (
@@ -99,7 +99,7 @@ export default function App() {
 
         {/* Footer */}
         <footer className="mt-12 text-center text-xs text-white/20">
-          Built with 💜 for college students · BunkSafe &copy; {new Date().getFullYear()}
+          Built with 💜 for college students · EPIC ATTENDANCE &copy; {new Date().getFullYear()}
         </footer>
       </div>
 

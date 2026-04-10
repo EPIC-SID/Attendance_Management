@@ -4,10 +4,10 @@ export default function Header({ target, onTargetChange }) {
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
           <span className="bg-gradient-to-r from-accent-indigo to-accent-violet bg-clip-text text-transparent">
-            BunkSafe
+            EPIC ATTENDANCE
           </span>
         </h1>
-        <p className="text-sm text-white/40 mt-1">Track. Predict. Bunk wisely.</p>
+        <p className="text-sm text-white/40 mt-1">Track. Predict. Stay ahead.</p>
       </div>
 
       {/* Target selector */}

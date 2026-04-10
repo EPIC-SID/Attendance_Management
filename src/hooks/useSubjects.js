@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 
-const STORAGE_KEY = 'bunksafe-subjects'
+const STORAGE_KEY = 'epic-attendance-subjects'
 
 function loadSubjects() {
   try {
