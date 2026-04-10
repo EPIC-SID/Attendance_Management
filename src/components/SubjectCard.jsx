@@ -45,9 +45,23 @@ export default function SubjectCard({ subject, target, onIncrement, onDecrementA
           </p>
         </div>
 
-        {/* Percentage badge */}
-        <div className={`${colors.bg} ${colors.text} px-3 py-1 rounded-full text-sm font-bold shrink-0 ml-3`}>
-          {prediction.percentage}%
+        {/* Badge & Actions */}
+        <div className="flex items-center gap-2 shrink-0 ml-3">
+          {/* Percentage badge */}
+          <div className={`${colors.bg} ${colors.text} px-3 py-1 rounded-full text-sm font-bold`}>
+            {prediction.percentage}%
+          </div>
+
+          <button
+            id={`delete-${id}`}
+            onClick={() => onRemove(id)}
+            className="p-1.5 rounded-lg bg-white/[0.03] hover:bg-danger-red/10 text-white/30 hover:text-danger-red transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
+            title="Remove subject"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -80,67 +94,62 @@ export default function SubjectCard({ subject, target, onIncrement, onDecrementA
       </div>
 
       {/* Action buttons */}
-      <div className="flex items-center gap-2">
-        <div className="flex-1 flex bg-safe-green/10 rounded-lg overflow-hidden transition-colors hover:bg-safe-green/20 focus-within:bg-safe-green/20">
-          <button
-            id={`attend-${id}`}
-            onClick={() => onIncrement(id)}
-            className="flex-1 flex items-center justify-center gap-1.5 text-safe-green py-2 px-2 sm:px-3 text-sm font-medium cursor-pointer"
-            title="Mark as Attended (class happened, you went)"
-          >
-            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            <span className="hidden sm:inline">Attended</span>
-          </button>
+      <div className="flex flex-col gap-2.5">
+        <div className="flex items-center gap-2 relative">
           
-          <button
-            onClick={() => onDecrementAttended(id)}
-            disabled={attended <= 0}
-            className="flex items-center justify-center px-2 text-safe-green/70 hover:text-safe-green hover:bg-safe-green/20 disabled:opacity-30 disabled:cursor-not-allowed border-l border-safe-green/20 transition-colors"
-            title="Undo Attended"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
-            </svg>
-          </button>
+          {/* Attended Group */}
+          <div className="flex-1 flex items-stretch border border-safe-green/20 rounded-xl overflow-hidden bg-safe-green/5 transition-all hover:border-safe-green/40 hover:bg-safe-green/10">
+            <button
+              onClick={() => onDecrementAttended(id)}
+              disabled={attended <= 0}
+              className="px-3 flex items-center justify-center text-safe-green/70 hover:text-safe-green hover:bg-safe-green/20 disabled:opacity-30 disabled:cursor-not-allowed border-r border-safe-green/20 transition-colors"
+              title="Undo Attended (-1 class)"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+              </svg>
+            </button>
+            <button
+              id={`attend-${id}`}
+              onClick={() => onIncrement(id)}
+              className="flex-1 flex items-center justify-center gap-1.5 text-safe-green py-2 px-2 text-sm font-semibold cursor-pointer"
+              title="Mark as Attended (class happened, you went)"
+            >
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Attended</span>
+            </button>
+          </div>
+
+          {/* Bunked Group */}
+          <div className="flex-1 flex items-stretch border border-danger-red/20 rounded-xl overflow-hidden bg-danger-red/5 transition-all hover:border-danger-red/40 hover:bg-danger-red/10">
+            <button
+              onClick={() => onDecrementBunk(id)}
+              disabled={total <= attended}
+              className="px-3 flex items-center justify-center text-danger-red/70 hover:text-danger-red hover:bg-danger-red/20 disabled:opacity-30 disabled:cursor-not-allowed border-r border-danger-red/20 transition-colors"
+              title="Undo Bunked (-1 total class)"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+              </svg>
+            </button>
+            <button
+              id={`bunk-${id}`}
+              onClick={() => onBunk(id)}
+              className="flex-1 flex items-center justify-center gap-1.5 text-danger-red py-2 px-2 text-sm font-semibold cursor-pointer"
+              title="Mark as Bunked (class happened, you skipped)"
+            >
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span>Bunked</span>
+            </button>
+          </div>
+
         </div>
 
-        <div className="flex-1 flex bg-danger-red/10 rounded-lg overflow-hidden transition-colors hover:bg-danger-red/20 focus-within:bg-danger-red/20">
-          <button
-            id={`bunk-${id}`}
-            onClick={() => onBunk(id)}
-            className="flex-1 flex items-center justify-center gap-1.5 text-danger-red py-2 px-2 sm:px-3 text-sm font-medium cursor-pointer"
-            title="Mark as Bunked (class happened, you skipped)"
-          >
-            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            <span className="hidden sm:inline">Bunked</span>
-          </button>
 
-          <button
-            onClick={() => onDecrementBunk(id)}
-            disabled={total <= attended}
-            className="flex items-center justify-center px-2 text-danger-red/70 hover:text-danger-red hover:bg-danger-red/20 disabled:opacity-30 disabled:cursor-not-allowed border-l border-danger-red/20 transition-colors"
-            title="Undo Bunked"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
-            </svg>
-          </button>
-        </div>
-
-        <button
-          id={`delete-${id}`}
-          onClick={() => onRemove(id)}
-          className="p-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] text-white/30 hover:text-danger-red transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
-          title="Remove subject"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </button>
       </div>
     </div>
   )
