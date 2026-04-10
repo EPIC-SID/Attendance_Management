@@ -47,6 +47,15 @@ export function useSubjects() {
     ))
   }, [])
 
+  const reorderSubjects = useCallback((fromIndex, toIndex) => {
+    setSubjects(prev => {
+      const updated = [...prev]
+      const [moved] = updated.splice(fromIndex, 1)
+      updated.splice(toIndex, 0, moved)
+      return updated
+    })
+  }, [])
+
   // Computed overall stats
   const totalAttended = subjects.reduce((sum, s) => sum + s.attended, 0)
   const totalClasses = subjects.reduce((sum, s) => sum + s.total, 0)
@@ -61,6 +70,7 @@ export function useSubjects() {
     incrementAttended,
     incrementTotal,
     updateSubject,
+    reorderSubjects,
     totalAttended,
     totalClasses,
     overallPercentage,

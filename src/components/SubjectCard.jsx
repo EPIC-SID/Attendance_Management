@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { calculatePrediction, getStatusColor } from '../utils/attendance'
 
-export default function SubjectCard({ subject, target, onIncrement, onBunk, onRemove }) {
+export default function SubjectCard({ subject, target, onIncrement, onBunk, onRemove, onDragStart, onDragOver, onDrop, onDragEnd, isDragging }) {
   const { attended, total, name, id } = subject
   const prediction = useMemo(
     () => calculatePrediction(attended, total, target),
@@ -10,7 +10,15 @@ export default function SubjectCard({ subject, target, onIncrement, onBunk, onRe
   const colors = getStatusColor(prediction.status)
 
   return (
-    <div className="glass-card p-5 animate-fade-in-up group" style={{ animationDelay: '0.05s' }}>
+    <div
+      className={`glass-card p-4 animate-fade-in-up group transition-all ${isDragging ? 'opacity-40 scale-95' : ''}`}
+      style={{ animationDelay: '0.05s' }}
+      draggable
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
+    >
       {/* Header row */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1 min-w-0">
