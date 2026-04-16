@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 *.json
+
+# User Todo
+assets/todo.txt
